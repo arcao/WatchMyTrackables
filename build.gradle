@@ -65,7 +65,7 @@ android {
 
     signingConfigs {
         release {
-            keyAlias = "watchyourtrackables"
+            keyAlias = "watchmytrackables"
         }
     }
 
