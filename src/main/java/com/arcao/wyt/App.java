@@ -6,7 +6,7 @@ import dagger.ObjectGraph;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
-public class WytApp extends Application {
+public class App extends Application {
 	private ObjectGraph objectGraph;
 
 	@Override public void onCreate() {
@@ -29,7 +29,7 @@ public class WytApp extends Application {
 		objectGraph.inject(o);
 	}
 
-	public static WytApp get(Context context) {
-		return (WytApp) context.getApplicationContext();
+	public static App get(Context context) {
+		return (App) context.getApplicationContext();
 	}
 }

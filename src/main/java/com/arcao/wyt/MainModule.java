@@ -6,13 +6,13 @@ import dagger.Module;
 				includes = {
 				},
 				injects = {
-								WytApp.class
+								App.class
 				}
 )
-public final class WytModule {
-	private final WytApp app;
+public final class MainModule {
+	private final App app;
 
-	public WytModule(WytApp app) {
+	public MainModule(App app) {
 		this.app = app;
 	}
 
