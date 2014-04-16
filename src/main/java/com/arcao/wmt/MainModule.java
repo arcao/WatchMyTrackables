@@ -1,4 +1,4 @@
-package com.arcao.wyt;
+package com.arcao.wmt;
 
 import dagger.Module;
 

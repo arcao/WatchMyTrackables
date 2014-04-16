@@ -1,8 +1,5 @@
-package com.arcao.wyt;
+package com.arcao.wmt;
 
-/**
- * Created by msloup on 16.4.2014.
- */
 final class Modules {
 	static Object[] list(App app) {
 		return new Object[] {

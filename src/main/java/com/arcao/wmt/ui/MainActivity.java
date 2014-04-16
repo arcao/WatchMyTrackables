@@ -1,8 +1,8 @@
-package com.arcao.wyt.ui;
+package com.arcao.wmt.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import com.arcao.wyt.R;
+import com.arcao.wmt.R;
 
 public class MainActivity extends ActionBarActivity {
 
