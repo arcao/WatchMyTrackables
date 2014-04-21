@@ -26,12 +26,18 @@ import dagger.Provides;
 public class ServiceModule {
 	@Provides
 	@Singleton
-	OAuthGeocachingApiConfiguration provideGeocachingApiConfiguration() {
+	OAuthGeocachingApiConfiguration provideOAuthGeocachingApiConfiguration() {
 		if (BuildConfig.GEOCACHING_API_STAGING) {
 			return new StagingGeocachingApiConfigurationImpl();
 		} else {
 			return new ProductionGeocachingApiConfigurationImpl();
 		}
+	}
+
+	@Provides
+	@Singleton
+	GeocachingApiConfiguration provideGeocachingApiConfiguration(OAuthGeocachingApiConfiguration configuration) {
+		return configuration;
 	}
 
 	@Provides
