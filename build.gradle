@@ -21,6 +21,7 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:19.+'
     compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'org.apache.commons:commons-io:1.3.2'
     compile 'com.squareup.dagger:dagger:1.2.1'
     compile 'com.squareup.okhttp:okhttp:1.3.0'
     compile 'com.squareup.picasso:picasso:2.2.0'
@@ -49,6 +50,18 @@ def buildTime = new Date().format("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone(
 def isTravis = "true".equals(System.getenv("TRAVIS"))
 def preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
 
+// Geocaching API key default value
+if (!project.hasProperty('geocachingApiKey')) {
+    project.setProperty('geocachingApiKey', '')
+}
+if (!project.hasProperty('geocachingApiSecret')) {
+    project.setProperty('geocachingApiSecret', '')
+}
+if (!project.hasProperty('geocachingApiStaging')) {
+    project.setProperty('geocachingApiStaging', true)
+}
+
+
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.3"
@@ -61,6 +74,9 @@ android {
     defaultConfig {
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+        buildConfigField "String", "GEOCACHING_API_KEY", "\"${geocachingApiKey}\""
+        buildConfigField "String", "GEOCACHING_API_SECRET", "\"${geocachingApiSecret}\""
+        buildConfigField "boolean", "GEOCACHING_API_STAGING", "${geocachingApiStaging}"
     }
 
     signingConfigs {
