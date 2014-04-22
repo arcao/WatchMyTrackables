@@ -1,17 +1,17 @@
 package com.arcao.wmt;
 
 import android.app.Application;
-
 import com.arcao.wmt.data.DataModule;
-
-import javax.inject.Singleton;
-
+import com.arcao.wmt.ui.UiModule;
 import dagger.Module;
 import dagger.Provides;
 
+import javax.inject.Singleton;
+
 @Module(
 				includes = {
-								DataModule.class
+								DataModule.class,
+								UiModule.class
 				},
 				injects = {
 								App.class
