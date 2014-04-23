@@ -34,12 +34,12 @@ public class GeocacheService {
 		requests = new ArrayList<>();
 	}
 
-	public void getGeocache(final String cacheCode, final GetGeocacheTarget target) {
+	public GetGeocacheRequest getGeocache(final String cacheCode, final GetGeocacheTarget target) {
+		final GetGeocacheRequest request = new GetGeocacheRequest(cacheCode, target);
+
 		executor.execute(new Runnable() {
 			@Override
 			public void run() {
-				GetGeocacheRequest request = new GetGeocacheRequest(cacheCode, target);
-
 				SimpleGeocache data = cache.get(cacheCode);
 
 				if (data != null) {
@@ -57,6 +57,8 @@ public class GeocacheService {
 
 			}
 		});
+
+		return request;
 	}
 
 	public static class GeocacheServiceBuilder implements Builder<GeocacheService> {

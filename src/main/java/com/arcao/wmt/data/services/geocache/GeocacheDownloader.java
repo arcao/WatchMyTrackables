@@ -4,6 +4,9 @@ import com.arcao.geocaching.api.data.SimpleGeocache;
 import com.arcao.geocaching.api.impl.live_geocaching_api.filter.CacheCodeFilter;
 import com.arcao.geocaching.api.impl.live_geocaching_api.filter.Filter;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +29,7 @@ public class GeocacheDownloader implements Runnable {
 
 			List<GetGeocacheRequest> processedRequests;
 			synchronized (service.requests) {
-				processedRequests = new ArrayList<>(service.requests);
+				processedRequests = new ArrayList<>(CollectionUtils.select(service.requests, REQUEST_FILTER));
 				service.requests.clear();
 			}
 
@@ -71,4 +74,11 @@ public class GeocacheDownloader implements Runnable {
 
 		return result;
 	}
+
+	private Predicate<GetGeocacheRequest> REQUEST_FILTER = new Predicate<GetGeocacheRequest>() {
+		@Override
+		public boolean evaluate(GetGeocacheRequest object) {
+			return !object.isCancelled();
+		}
+	};
 }
