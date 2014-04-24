@@ -2,11 +2,9 @@ package com.arcao.wmt.data.services.geocache;
 
 import android.content.Context;
 import android.os.Looper;
-
 import com.arcao.geocaching.api.GeocachingApi;
 import com.arcao.geocaching.api.data.SimpleGeocache;
 import com.arcao.utils.cache.Cache;
-
 import org.apache.commons.lang3.builder.Builder;
 
 import java.util.ArrayList;
@@ -32,6 +30,10 @@ public class GeocacheService {
 		this.handler = handler;
 
 		requests = new ArrayList<>();
+	}
+
+	public GetGeocacheRequest getGeocache(final String cacheCode) {
+		return getGeocache(cacheCode, null);
 	}
 
 	public GetGeocacheRequest getGeocache(final String cacheCode, final GetGeocacheTarget target) {
