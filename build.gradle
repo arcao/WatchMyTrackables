@@ -29,7 +29,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:5.0.+'
     compile 'com.jakewharton.timber:timber:2.2.2'
     compile 'com.android.support:appcompat-v7:19.+'
-    compile('com.arcao:geocaching-api:1.5.20') {
+    compile('com.arcao:geocaching-api:1.5.21') {
       exclude group: 'log4j', module: 'log4j' /* Not working in Android, log4j-over-slf4j used instead */
     }
     compile('oauth.signpost:signpost-commonshttp4:1.2.1.2') {
@@ -41,7 +41,7 @@ dependencies {
     }
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     
-    
+
     provided 'com.squareup.dagger:dagger-compiler:1.2.1'
 }
 
