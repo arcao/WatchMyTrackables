@@ -3,14 +3,12 @@ package com.arcao.wmt.data.services.geocache;
 import com.arcao.geocaching.api.data.SimpleGeocache;
 import com.arcao.geocaching.api.impl.live_geocaching_api.filter.CacheCodeFilter;
 import com.arcao.geocaching.api.impl.live_geocaching_api.filter.Filter;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
+import timber.log.Timber;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 public class GeocacheDownloader implements Runnable {
 	private static final long WAIT_BEFORE_REQUEST_MS = 100;
@@ -44,10 +42,11 @@ public class GeocacheDownloader implements Runnable {
 								new CacheCodeFilter(getCacheCodePerPage(processedRequests, current, GEOCACHES_PER_REQUEST))
 				});
 
+				service.cache.putAll(geocaches);
+
 				for (SimpleGeocache geocache : geocaches) {
 					GetGeocacheRequest request = getRequestByCacheCode(processedRequests, geocache.getCacheCode());
 					service.handler.dispatchGetGeocache(request, geocache);
-					service.cache.put(geocache);
 				}
 			}
 		} catch (Exception e) {

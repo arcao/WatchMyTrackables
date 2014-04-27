@@ -1,21 +1,14 @@
 package com.arcao.wmt.data.services.geocache;
 
 import android.content.Context;
-
 import com.arcao.geocaching.api.data.SimpleGeocache;
 import com.arcao.utils.cache.AbstractCache;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import timber.log.Timber;
+
+import java.io.*;
+import java.util.Map;
 
 public class GeocacheFileCache extends AbstractCache<String, SimpleGeocache> {
 	protected final File baseDir;
@@ -87,5 +80,12 @@ public class GeocacheFileCache extends AbstractCache<String, SimpleGeocache> {
 		}
 
 		tempF.renameTo(f);
+	}
+
+	@Override
+	public void putAll(Map<String, SimpleGeocache> values) {
+		for (Map.Entry<String, SimpleGeocache> entry : values.entrySet()) {
+			put(entry.getKey(), entry.getValue());
+		}
 	}
 }
