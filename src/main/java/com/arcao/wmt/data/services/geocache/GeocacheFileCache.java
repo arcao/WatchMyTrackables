@@ -3,6 +3,7 @@ package com.arcao.wmt.data.services.geocache;
 import android.content.Context;
 import com.arcao.geocaching.api.data.SimpleGeocache;
 import com.arcao.utils.cache.AbstractCache;
+import com.arcao.wmt.data.marshalling.SimpleGeocacheMarshaller;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import timber.log.Timber;
@@ -48,7 +49,7 @@ public class GeocacheFileCache extends AbstractCache<String, SimpleGeocache> {
 
 		try {
 			ois = new ObjectInputStream(new FileInputStream(f));
-			return Marshalling.SIMPLE_GEOCACHE.from(ois);
+			return SimpleGeocacheMarshaller.INSTANCE.from(ois);
 		} catch (IOException e) {
 			Timber.e(e, e.getMessage());
 			return null;
@@ -71,7 +72,7 @@ public class GeocacheFileCache extends AbstractCache<String, SimpleGeocache> {
 		try {
 			tempF = File.createTempFile(value.getCacheCode(), "tmp");
 			oos = new ObjectOutputStream(new FileOutputStream(tempF));
-			Marshalling.SIMPLE_GEOCACHE.to(oos, value);
+			SimpleGeocacheMarshaller.INSTANCE.to(oos, value);
 		} catch (IOException e) {
 			Timber.e(e, e.getMessage());
 			return;
