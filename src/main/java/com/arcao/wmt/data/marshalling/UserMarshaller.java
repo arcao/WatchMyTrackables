@@ -22,6 +22,9 @@ public class UserMarshaller implements Marshaller<User> {
 		if (in.readInt() != VERSION)
 			return null;
 
+		if (in.readBoolean())
+			return null;
+
 		return new User(
 						in.readUTF(),
 						in.readInt(),
@@ -38,6 +41,10 @@ public class UserMarshaller implements Marshaller<User> {
 	@Override
 	public void to(ObjectOutput out, User data) throws IOException {
 		out.writeInt(VERSION);
+
+		out.writeBoolean(data == null);
+		if (data == null)
+			return;
 
 		out.writeUTF(data.getAvatarUrl());
 		out.writeInt(data.getFindCount());

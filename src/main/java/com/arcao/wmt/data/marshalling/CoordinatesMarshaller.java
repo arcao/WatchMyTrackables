@@ -21,6 +21,9 @@ public class CoordinatesMarshaller implements Marshaller<Coordinates> {
 		if (in.readInt() != VERSION)
 			return null;
 
+		if (in.readBoolean())
+			return null;
+
 		return new Coordinates(
 						in.readDouble(),
 						in.readDouble()
@@ -30,6 +33,10 @@ public class CoordinatesMarshaller implements Marshaller<Coordinates> {
 	@Override
 	public void to(ObjectOutput out, Coordinates data) throws IOException {
 		out.writeInt(VERSION);
+
+		out.writeBoolean(data == null);
+		if (data == null)
+			return;
 
 		out.writeDouble(data.getLatitude());
 		out.writeDouble(data.getLongitude());

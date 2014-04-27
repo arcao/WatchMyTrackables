@@ -24,6 +24,9 @@ public class SimpleGeocacheMarshaller implements Marshaller<SimpleGeocache> {
 		if (in.readInt() != VERSION)
 			return null;
 
+		if (in.readBoolean())
+			return null;
+
 		return new SimpleGeocache(
 						in.readLong(),
 						in.readUTF(),
@@ -49,6 +52,10 @@ public class SimpleGeocacheMarshaller implements Marshaller<SimpleGeocache> {
 	@Override
 	public void to(ObjectOutput out, SimpleGeocache data) throws IOException {
 		out.writeInt(VERSION);
+
+		out.writeBoolean(data == null);
+		if (data == null)
+			return;
 
 		out.writeLong(data.getId());
 		out.writeUTF(data.getCacheCode());
