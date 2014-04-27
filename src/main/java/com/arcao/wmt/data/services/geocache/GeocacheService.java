@@ -45,7 +45,7 @@ public class GeocacheService {
 				SimpleGeocache data = cache.get(cacheCode);
 
 				if (data != null) {
-					handler.dispatchGetGeocache(request, data);
+					handler.dispatchGetGeocache(request, data, null);
 					return;
 				}
 

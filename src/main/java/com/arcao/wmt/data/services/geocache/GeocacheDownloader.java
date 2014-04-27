@@ -46,7 +46,7 @@ public class GeocacheDownloader implements Runnable {
 
 				for (SimpleGeocache geocache : geocaches) {
 					GetGeocacheRequest request = getRequestByCacheCode(processedRequests, geocache.getCacheCode());
-					service.handler.dispatchGetGeocache(request, geocache);
+					service.handler.dispatchGetGeocache(request, geocache, null);
 				}
 			}
 		} catch (Exception e) {

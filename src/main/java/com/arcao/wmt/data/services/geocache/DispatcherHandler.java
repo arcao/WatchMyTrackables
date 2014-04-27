@@ -13,8 +13,8 @@ public class DispatcherHandler extends Handler {
 		super(looper);
 	}
 
-	public void dispatchGetGeocache(GetGeocacheRequest request, SimpleGeocache data) {
-		obtainMessage(GET_GEOCACHE_COMPLETE, new GetGeocacheResult(request, data)).sendToTarget();
+	public void dispatchGetGeocache(GetGeocacheRequest request, SimpleGeocache data, Throwable t) {
+		obtainMessage(GET_GEOCACHE_COMPLETE, new GetGeocacheResult(request, data, t)).sendToTarget();
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class DispatcherHandler extends Handler {
 		switch (msg.what) {
 			case GET_GEOCACHE_COMPLETE:
 				GetGeocacheResult result = (GetGeocacheResult) msg.obj;
-				result.request.publish(result.data);
+				result.request.publish(result.data, result.t);
 				break;
 			default:
 				super.handleMessage(msg);
@@ -32,10 +32,12 @@ public class DispatcherHandler extends Handler {
 	private static class GetGeocacheResult {
 		protected final GetGeocacheRequest request;
 		protected final SimpleGeocache data;
+		protected final Throwable t;
 
-		private GetGeocacheResult(GetGeocacheRequest request, SimpleGeocache data) {
+		private GetGeocacheResult(GetGeocacheRequest request, SimpleGeocache data, Throwable t) {
 			this.request = request;
 			this.data = data;
+			this.t = t;
 		}
 	}
 }
