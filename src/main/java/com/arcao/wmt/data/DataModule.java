@@ -3,26 +3,27 @@ package com.arcao.wmt.data;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.net.Uri;
-
+import com.arcao.wmt.data.database.DatabaseModule;
 import com.arcao.wmt.data.services.ServiceModule;
 import com.squareup.okhttp.HttpResponseCache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import timber.log.Timber;
 
+import javax.inject.Singleton;
+import java.io.File;
+import java.io.IOException;
+
 import static android.content.Context.MODE_PRIVATE;
 
 @Module(
-				includes = ServiceModule.class,
+				includes = {
+								DatabaseModule.class,
+								ServiceModule.class
+				},
 				complete = false,
 				library = true
 )
