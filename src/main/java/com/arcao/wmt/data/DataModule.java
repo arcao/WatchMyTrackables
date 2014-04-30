@@ -3,6 +3,7 @@ package com.arcao.wmt.data;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import com.arcao.wmt.data.database.DatabaseModule;
 import com.arcao.wmt.data.services.ServiceModule;
 import com.squareup.okhttp.HttpResponseCache;
@@ -16,8 +17,6 @@ import timber.log.Timber;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
-
-import static android.content.Context.MODE_PRIVATE;
 
 @Module(
 				includes = {
@@ -33,7 +32,7 @@ public final class DataModule {
 	@Provides
 	@Singleton
 	SharedPreferences provideSharedPreferences(Application app) {
-		return app.getSharedPreferences("u2020", MODE_PRIVATE);
+		return PreferenceManager.getDefaultSharedPreferences(app);
 	}
 
 	@Provides
