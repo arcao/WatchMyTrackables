@@ -29,4 +29,11 @@ public final class MainModule {
 	Application provideApplication() {
 		return app;
 	}
+
+	@Provides
+	@Singleton
+	App provideApp() {
+		return app;
+	}
+
 }
