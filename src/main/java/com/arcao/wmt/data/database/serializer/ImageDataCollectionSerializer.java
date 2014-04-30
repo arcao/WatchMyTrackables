@@ -9,9 +9,6 @@ import timber.log.Timber;
 
 import java.io.*;
 
-/**
- * Created by msloup on 27.4.2014.
- */
 public class ImageDataCollectionSerializer extends TypeSerializer {
 	@Override
 	public Class<?> getDeserializedType() {
