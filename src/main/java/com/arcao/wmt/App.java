@@ -2,6 +2,7 @@ package com.arcao.wmt;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
 import dagger.ObjectGraph;
@@ -9,10 +10,13 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 public class App extends Application {
 	private ObjectGraph objectGraph;
 	@Inject	Configuration databaseConfiguration;
+	@Inject SharedPreferences prefs;
+	private String deviceId;
 
 	@Override public void onCreate() {
 		super.onCreate();
@@ -22,7 +26,7 @@ public class App extends Application {
 		}
 
 		buildObjectGraphAndInject();
-		ActiveAndroid.initialize(databaseConfiguration);
+		ActiveAndroid.initialize(databaseConfiguration, BuildConfig.DEBUG);
 	}
 
 	@Override
@@ -44,4 +48,18 @@ public class App extends Application {
 	public static App get(Context context) {
 		return (App) context.getApplicationContext();
 	}
+
+	public String getDeviceId() {
+		if (deviceId == null) {
+			deviceId = prefs.getString("device_id", null);
+
+			if (deviceId == null) {
+				deviceId = UUID.randomUUID().toString();
+				prefs.edit().putString("device_id", deviceId).apply();
+			}
+		}
+
+		return deviceId;
+	}
+
 }
