@@ -3,13 +3,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.10.+'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.0.+'
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.9.+'
     }
 }
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'android'
 apply plugin: 'hugo'
 
@@ -68,6 +66,7 @@ if (!project.hasProperty('geocachingApiStaging')) {
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.3"
+    useOldManifestMerger false
 
     dexOptions {
       // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -90,7 +89,7 @@ android {
 
     buildTypes {
         debug {
-            //packageNameSuffix '.dev'
+            packageNameSuffix '.dev'
             versionNameSuffix '-dev'
         }
         release {
@@ -118,11 +117,6 @@ android {
         exclude 'templates/release-notes.vm'
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'log4j.xml'
-    }
-
-    // use old PNGCruncher, the new one cause crash on 2.x devices
-    aaptOptions {
-        useAaptPngCruncher = true
     }
 }
 

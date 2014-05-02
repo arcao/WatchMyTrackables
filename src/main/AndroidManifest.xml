@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <provider android:authorities="com.arcao.wmt" android:exported="false" android:name="com.activeandroid.content.ContentProvider" />
+        <provider android:authorities="${packageName}" android:exported="false" android:name="com.activeandroid.content.ContentProvider" />
 
         <activity
             android:name=".ui.MainActivity"
