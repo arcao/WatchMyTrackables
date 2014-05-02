@@ -45,6 +45,7 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
 		switch (loaderID) {
 			case TRACKABLE_LOADER:

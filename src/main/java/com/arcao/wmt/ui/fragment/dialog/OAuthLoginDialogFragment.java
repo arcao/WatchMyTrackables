@@ -195,6 +195,7 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 		return view;
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("SetJavaScriptEnabled")
 	public WebView createWebView(Bundle savedInstanceState) {
 		WebView webView = new FixedWebView(getActivity());
