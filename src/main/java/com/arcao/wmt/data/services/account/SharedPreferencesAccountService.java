@@ -3,7 +3,11 @@ package com.arcao.wmt.data.services.account;
 import android.accounts.Account;
 import android.content.SharedPreferences;
 
+import com.arcao.geocaching.api.GeocachingApi;
+import com.arcao.geocaching.api.exception.GeocachingApiException;
 import com.arcao.wmt.constant.PrefConstants;
+
+import timber.log.Timber;
 
 public class SharedPreferencesAccountService implements AccountService {
 	protected SharedPreferences prefs;
@@ -77,5 +81,17 @@ public class SharedPreferencesAccountService implements AccountService {
 		editor.apply();
 
 		return true;
+	}
+
+	@Override
+	public void apply(GeocachingApi api) {
+		if (!hasAccount())
+			return;
+
+		try {
+			api.openSession(getAuthToken());
+		} catch (GeocachingApiException e) {
+			Timber.e(e, e.getMessage());
+		}
 	}
 }

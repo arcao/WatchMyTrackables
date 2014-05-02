@@ -21,6 +21,8 @@ import com.arcao.wmt.data.services.account.AccountService;
 import com.arcao.wmt.data.services.account.SharedPreferencesAccountService;
 import com.arcao.wmt.data.services.geocache.GeocacheFileCache;
 import com.arcao.wmt.data.services.geocache.GeocacheService;
+import com.arcao.wmt.data.services.oauth.GeocachingApiOAuthConsumer;
+import com.arcao.wmt.data.services.oauth.GeocachingApiOAuthProvider;
 import com.squareup.okhttp.OkHttpClient;
 
 import javax.inject.Named;
@@ -28,6 +30,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
 
 @Module(
 				complete = false,
@@ -58,8 +62,10 @@ public final class ServiceModule {
 
 	@Provides
 	@Singleton
-	GeocachingApi provideGeocachingApi(GeocachingApiConfiguration configuration, JsonDownloader downloader) {
-		return new LiveGeocachingApi.Builder().setConfiguration(configuration).setDownloader(downloader).build();
+	GeocachingApi provideGeocachingApi(GeocachingApiConfiguration configuration, JsonDownloader downloader, AccountService accountService) {
+		GeocachingApi api = new LiveGeocachingApi.Builder().setConfiguration(configuration).setDownloader(downloader).build();
+		accountService.apply(api);
+		return api;
 	}
 
 	@Provides
@@ -89,5 +95,17 @@ public final class ServiceModule {
 		syncManager.sync();
 
 		return CookieManager.getInstance();
+	}
+
+	@Provides
+	@Singleton
+	OAuthProvider provideOAuthProvider(OAuthGeocachingApiConfiguration configuration, OkHttpClient client) {
+		return new GeocachingApiOAuthProvider(configuration, client);
+	}
+
+	@Provides
+	@Singleton
+	OAuthConsumer provideOAuthConsumer(OAuthGeocachingApiConfiguration configuration) {
+		return new GeocachingApiOAuthConsumer(configuration);
 	}
 }

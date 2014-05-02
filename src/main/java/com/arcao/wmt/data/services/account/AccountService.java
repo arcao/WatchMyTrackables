@@ -2,6 +2,7 @@ package com.arcao.wmt.data.services.account;
 
 import android.accounts.Account;
 
+import com.arcao.geocaching.api.GeocachingApi;
 import com.arcao.wmt.BuildConfig;
 
 /**
@@ -18,4 +19,6 @@ public interface AccountService {
 	String getAuthToken();
 	boolean setAuthToken(String token);
 	boolean invalidateAuthToken();
+
+	void apply(GeocachingApi api);
 }

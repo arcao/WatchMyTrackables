@@ -2,6 +2,7 @@ package com.arcao.wmt.ui.task;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+
 import com.arcao.geocaching.api.GeocachingApi;
 import com.arcao.geocaching.api.data.UserProfile;
 import com.arcao.geocaching.api.exception.GeocachingApiException;
@@ -10,6 +11,18 @@ import com.arcao.geocaching.api.util.DeviceInfoFactory;
 import com.arcao.wmt.App;
 import com.arcao.wmt.constant.AppConstants;
 import com.squareup.okhttp.OkHttpClient;
+
+import org.apache.http.impl.cookie.DateParseException;
+import org.apache.http.impl.cookie.DateUtils;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Date;
+
+import javax.inject.Inject;
+
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -17,16 +30,7 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
-import org.apache.http.impl.cookie.DateParseException;
-import org.apache.http.impl.cookie.DateUtils;
 import timber.log.Timber;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Date;
 
 public class OAuthLoginTask extends AsyncTask<String, Void, String[]> {
 	public interface OAuthLoginTaskListener {
@@ -74,6 +78,7 @@ public class OAuthLoginTask extends AsyncTask<String, Void, String[]> {
 				oAuthProvider.retrieveAccessToken(oAuthConsumer, params[0], OAuth.OAUTH_TIMESTAMP, timestamp);
 
 				// get account name
+				// this update token in all injected GeocachingApi because instance of GeocachingApi is singleton
 				api.openSession(oAuthConsumer.getToken());
 				UserProfile userProfile = api.getYourUserProfile(false, false, false, false, false, false, DeviceInfoFactory.create(app));
 
