@@ -1,11 +1,13 @@
 package com.arcao.wmt.ui;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.content.ContentProvider;
 import com.activeandroid.query.Delete;
@@ -15,23 +17,32 @@ import com.arcao.geocaching.api.exception.GeocachingApiException;
 import com.arcao.wmt.App;
 import com.arcao.wmt.R;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
+import com.arcao.wmt.data.services.account.AccountService;
 import com.arcao.wmt.ui.fragment.TrackableListFragment;
-import timber.log.Timber;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.List;
+
+import timber.log.Timber;
 
 public class MainActivity extends ActionBarActivity {
 	@Inject
 	Provider<UpdateTask> updateTask;
+	@Inject
+	AccountService accountService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_main);
 		App.get(this).inject(this);
+		setContentView(R.layout.activity_main);
+
+		if (!accountService.hasAccount()) {
+			startActivityForResult(new Intent(this, WelcomeActivity.class), 0);
+		}
 	}
 
 	@Override
@@ -73,9 +84,6 @@ public class MainActivity extends ActionBarActivity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				// TODO for testing purposes only
-				api.openSession("hFHmU3c7wnljwzCg4QodthxIuMo=");
-
 				new Delete().from(MyTrackableModel.class).execute();
 				app.getContentResolver().notifyChange(ContentProvider.createUri(MyTrackableModel.class, null), null);
 
@@ -97,6 +105,15 @@ public class MainActivity extends ActionBarActivity {
 			}
 
 			return null;
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (resultCode == RESULT_CANCELED) {
+			finish();
 		}
 	}
 }

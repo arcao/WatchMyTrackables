@@ -2,6 +2,7 @@ package com.arcao.wmt.ui;
 
 import com.arcao.wmt.ui.fragment.TrackableListFragment;
 import com.arcao.wmt.ui.fragment.dialog.OAuthLoginDialogFragment;
+import com.arcao.wmt.ui.task.OAuthLoginTask;
 
 import dagger.Module;
 
@@ -10,7 +11,8 @@ import dagger.Module;
 								MainActivity.class,
 								WelcomeActivity.class,
 								TrackableListFragment.class,
-								OAuthLoginDialogFragment.class
+								OAuthLoginDialogFragment.class,
+								OAuthLoginTask.class
 				},
 				complete = false,
 				library = true
