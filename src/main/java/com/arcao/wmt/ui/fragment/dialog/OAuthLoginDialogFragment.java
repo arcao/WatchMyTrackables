@@ -1,11 +1,11 @@
 package com.arcao.wmt.ui.fragment.dialog;
 
+import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,22 +13,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+
 import com.arcao.wmt.App;
 import com.arcao.wmt.R;
 import com.arcao.wmt.constant.AppConstants;
-import com.arcao.wmt.constant.PrefConstants;
+import com.arcao.wmt.data.services.account.AccountService;
 import com.arcao.wmt.ui.task.OAuthLoginTask;
-import oauth.signpost.OAuth;
-import timber.log.Timber;
+
+import java.lang.ref.WeakReference;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.lang.ref.WeakReference;
-import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import oauth.signpost.OAuth;
+import timber.log.Timber;
 
 public class OAuthLoginDialogFragment extends AbstractDialogFragment implements OAuthLoginTask.OAuthLoginTaskListener {
 	private static final String STATE_PROGRESS_VISIBLE = "STATE_PROGRESS_VISIBLE";
@@ -42,11 +46,18 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 	@Inject
 	protected App app;
 	@Inject
-	protected SharedPreferences preferences;
+	protected AccountService accountService;
+	@Inject
+	protected CookieManager cookieManager;
+
+	@InjectView(R.id.webview_holder)
+	protected FrameLayout webViewHolder;
+	@InjectView(R.id.progress_holder)
+	protected View progressHolder;
+
 
 	protected WeakReference<OnTaskFinishedListener> taskFinishedListenerRef;
 	protected WebView webView = null;
-	protected View progressHolder = null;
 	protected Bundle lastInstanceState;
 	protected OAuthLoginTask mTask;
 
@@ -59,6 +70,13 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 		super.onCreate(savedInstanceState);
 
 		setRetainInstance(true);
+
+		// clear geocaching.com cookies
+		clearGeocachingCookies();
+
+		mTask = loginTaskProvider.get();
+		mTask.setOAuthLoginTaskListener(this);
+		mTask.execute();
 	}
 
 	@Override
@@ -70,23 +88,9 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString() + " must implement OnTaskFinishListener");
 		}
-
-		// clear geocaching.com cookies
-		clearGeocachingCookies();
-
-		mTask = loginTaskProvider.get();
-		mTask.setOAuthLoginTaskListener(this);
-		mTask.execute();
 	}
 
 	private void clearGeocachingCookies() {
-		// This is to work around a bug where CookieManager may fail to instantiate if CookieSyncManager
-		// has never been created.
-		CookieSyncManager syncManager = CookieSyncManager.createInstance(app);
-		syncManager.sync();
-
-		CookieManager cookieManager = CookieManager.getInstance();
-
 		// setCookie acts differently when trying to expire cookies between builds of Android that are using
 		// Chromium HTTP stack and those that are not. Using both of these domains to ensure it works on both.
 		clearCookiesForDomain(cookieManager, "geocaching.com");
@@ -135,10 +139,10 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 
 	@Override
 	public void onOAuthTaskFinished(String userName, String token) {
-		preferences.edit()
-						.putString(PrefConstants.USERNAME, userName)
-						.putString(PrefConstants.ACCESS_TOKEN, token)
-						.apply();
+		accountService.removeAccount();
+
+		accountService.addAccount(new Account(userName, AccountService.ACCOUNT_TYPE));
+		accountService.setAuthToken(token);
 
 		OnTaskFinishedListener listener = taskFinishedListenerRef.get();
 		if (listener != null) {
@@ -177,7 +181,8 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 			savedInstanceState = lastInstanceState;
 
 		View view = inflater.inflate(R.layout.fragment_oauth, container);
-		progressHolder = view.findViewById(R.id.progress_holder);
+		ButterKnife.inject(this, view);
+
 		progressHolder.setVisibility(View.VISIBLE);
 
 		if (savedInstanceState != null) {
@@ -185,8 +190,6 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 		}
 
 		webView = createWebView(savedInstanceState);
-
-		FrameLayout webViewHolder = (FrameLayout) view.findViewById(R.id.webview_holder);
 		webViewHolder.addView(webView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
 		return view;

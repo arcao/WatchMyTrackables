@@ -1,22 +1,27 @@
 package com.arcao.wmt.data;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+
 import com.arcao.wmt.data.database.DatabaseModule;
 import com.arcao.wmt.data.services.ServiceModule;
 import com.squareup.okhttp.HttpResponseCache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import timber.log.Timber;
-
-import javax.inject.Singleton;
-import java.io.File;
-import java.io.IOException;
 
 @Module(
 				includes = {
@@ -33,6 +38,13 @@ public final class DataModule {
 	@Singleton
 	SharedPreferences provideSharedPreferences(Application app) {
 		return PreferenceManager.getDefaultSharedPreferences(app);
+	}
+
+	@Provides
+	@Singleton
+	@Named("Account")
+	SharedPreferences provideAccountSharedPreferences(Application app) {
+		return app.getSharedPreferences("Account", Context.MODE_PRIVATE);
 	}
 
 	@Provides
