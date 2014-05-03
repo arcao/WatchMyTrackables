@@ -8,12 +8,13 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+
 import com.activeandroid.Model;
 import com.activeandroid.content.ContentProvider;
 
 public class TrackableListFragment extends AbstractListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String MODEL = "MODEL";
-	private static final int TRACKABLE_LOADER = 0;
+	private static final int TRACKABLE_LOADER = 100;
 
 	private CursorAdapter mAdapter;
 
@@ -42,6 +43,12 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 
 		setListShown(false);
 		getActivity().getSupportLoaderManager().initLoader(TRACKABLE_LOADER, null, this);
+	}
+
+	@Override
+	public void onDestroyView() {
+		getActivity().getSupportLoaderManager().destroyLoader(TRACKABLE_LOADER);
+		super.onDestroyView();
 	}
 
 	@Override
