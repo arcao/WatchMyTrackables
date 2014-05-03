@@ -93,6 +93,7 @@ android {
             versionNameSuffix '-dev'
         }
         release {
+            packageNameSuffix '.rel'
             signingConfig signingConfigs.release
             runProguard true
             proguardFile getDefaultProguardFile('proguard-android.txt')
