@@ -2,4 +2,7 @@
 <resources>
 
     <string name="app_name">Watch My Trackables</string>
+    <string name="tab_my">My</string>
+    <string name="tab_favorited">Favorited</string>
+    <string name="tab_empty" />
 </resources>

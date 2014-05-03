@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="actionbar_tab_title_show_always">false</bool>
+</resources>
