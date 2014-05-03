@@ -1,22 +1,22 @@
 package com.arcao.wmt.ui;
 
-import com.arcao.wmt.ui.fragment.TrackableListFragment;
-import com.arcao.wmt.ui.fragment.dialog.OAuthLoginDialogFragment;
-import com.arcao.wmt.ui.task.OAuthLoginTask;
+import com.arcao.wmt.ui.fragment.FragmentModule;
+import com.arcao.wmt.ui.task.TaskModule;
 
 import dagger.Module;
 
 @Module(
+				includes = {
+								FragmentModule.class,
+								TaskModule.class
+				},
 				injects = {
 								MainActivity.class,
 								WelcomeActivity.class,
-								TrackableListFragment.class,
-								OAuthLoginDialogFragment.class,
-								OAuthLoginTask.class
 				},
 				complete = false,
 				library = true
 )
-public class UiModule {
+public final class UiModule {
 
 }
