@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.support.v4.app.DialogFragment;
 import com.arcao.wmt.App;
 
-public class AbstractDialogFragment extends DialogFragment {
+public abstract class AbstractDialogFragment extends DialogFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);

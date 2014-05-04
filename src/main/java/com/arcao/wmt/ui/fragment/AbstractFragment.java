@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import com.arcao.wmt.App;
 
-public class AbstractFragment extends Fragment {
+public abstract class AbstractFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);

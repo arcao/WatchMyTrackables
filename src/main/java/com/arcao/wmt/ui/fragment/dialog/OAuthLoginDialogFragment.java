@@ -66,6 +66,9 @@ public class OAuthLoginDialogFragment extends AbstractDialogFragment implements 
 		return new OAuthLoginDialogFragment();
 	}
 
+	public OAuthLoginDialogFragment() {
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

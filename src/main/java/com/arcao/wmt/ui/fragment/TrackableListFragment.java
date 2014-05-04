@@ -18,6 +18,9 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 
 	private CursorAdapter mAdapter;
 
+	public TrackableListFragment() {
+	}
+
 	public static <T extends Model> ListFragment newInstance(Class<T> modelClass) {
 		ListFragment fragment = new TrackableListFragment();
 
