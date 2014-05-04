@@ -14,8 +14,4 @@
         android:title="Refresh"
         android:icon="@drawable/ic_action_navigation_refresh"
         yourapp:showAsAction="ifRoom" />
-    <item android:id="@+id/action_settings"
-        android:title="Settings"
-        android:icon="@drawable/ic_action_action_settings"
-        yourapp:showAsAction="ifRoom" />
 </menu>

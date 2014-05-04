@@ -12,25 +12,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-import com.activeandroid.Model;
 import com.arcao.wmt.App;
 import com.arcao.wmt.R;
-import com.arcao.wmt.data.database.model.FavoritedTrackableModel;
-import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.data.services.account.AccountService;
 import com.arcao.wmt.ui.fragment.TrackableListFragment;
-import com.arcao.wmt.ui.task.UpdateMyTrackablesTask;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 public class MainActivity extends ActionBarActivity {
-	@Inject
-	Provider<UpdateMyTrackablesTask> updateTask;
 	@Inject
 	AccountService accountService;
 
@@ -54,7 +45,7 @@ public class MainActivity extends ActionBarActivity {
 						.setText(showTabTitle ? R.string.tab_my : R.string.tab_empty)
 						.setContentDescription(R.string.tab_my)
 						.setIcon(R.drawable.ic_action_social_person)
-						.setTabListener(new TabListener<>(MyTrackableModel.class));
+						.setTabListener(new TabListener(TrackableListFragment.Type.My));
 		actionBar.addTab(tab);
 		actionBar.selectTab(tab);
 
@@ -62,7 +53,7 @@ public class MainActivity extends ActionBarActivity {
 						.setText(showTabTitle ? R.string.tab_favorited : R.string.tab_empty)
 						.setIcon(R.drawable.ic_action_rating_favorite)
 						.setContentDescription(R.string.tab_favorited)
-						.setTabListener(new TabListener<>(FavoritedTrackableModel.class));
+						.setTabListener(new TabListener(TrackableListFragment.Type.Favorited));
 		actionBar.addTab(tab);
 
 		if (!accountService.hasAccount()) {
@@ -73,7 +64,7 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu_main, menu);
+		inflater.inflate(R.menu.activity_base, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -81,8 +72,7 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
-			case R.id.action_refresh:
-				updateTask.get().execute();
+			case R.id.action_settings:
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -131,19 +121,19 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	private static class TabListener<M extends Model> implements ActionBar.TabListener {
-		protected final Class<M> model;
+	private static class TabListener implements ActionBar.TabListener {
+		protected final TrackableListFragment.Type type;
 		protected ListFragment listFragment;
 
-		public TabListener(Class<M> model) {
-			this.model = model;
+		public TabListener(TrackableListFragment.Type type) {
+			this.type = type;
 		}
 
 		@Override
 		public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 			if (listFragment == null) {
-				listFragment = TrackableListFragment.newInstance(model);
-				fragmentTransaction.replace(R.id.content, listFragment, model.getSimpleName());
+				listFragment = TrackableListFragment.newInstance(type);
+				fragmentTransaction.replace(R.id.content, listFragment, type.name());
 			} else {
 				fragmentTransaction.attach(listFragment);
 			}
