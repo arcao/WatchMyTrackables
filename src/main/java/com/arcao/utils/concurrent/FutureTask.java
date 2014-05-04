@@ -28,9 +28,18 @@ public class FutureTask<Key, Value> implements Future<Value> {
 	}
 
 	@Override
-	public synchronized boolean cancel(boolean mayInterruptIfRunning) {
-		cancelled = true;
-		((Object)this).notifyAll();
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		synchronized (this) {
+			cancelled = true;
+			exception = new CancellationException();
+			((Object) this).notifyAll();
+		}
+
+		FutureCallback<Value> callback = callbackRef.get();
+		if (callback != null) {
+			callback.onFailure(exception);
+		}
+
 		return true;
 	}
 
@@ -84,9 +93,13 @@ public class FutureTask<Key, Value> implements Future<Value> {
 			((Object)this).notifyAll();
 		}
 
-		FutureCallback<Value> target = callbackRef.get();
-		if (target != null && !cancelled) {
-			target.onCompleted(exception, value);
+		FutureCallback<Value> callback = callbackRef.get();
+		if (callback != null && !cancelled) {
+			if (exception != null) {
+				callback.onFailure(exception);
+			} else {
+				callback.onCompleted(value);
+			}
 		}
 	}
 }
