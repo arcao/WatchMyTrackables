@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
@@ -12,16 +13,20 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import com.arcao.wmt.App;
 import com.arcao.wmt.R;
 import com.arcao.wmt.data.services.account.AccountService;
 import com.arcao.wmt.ui.fragment.TrackableListFragment;
 
-import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MainActivity extends ActionBarActivity {
+import javax.inject.Inject;
+
+import timber.log.Timber;
+
+public class MainActivity extends ActionBarActivity implements TrackableListFragment.TrackableListListener {
 	@Inject
 	AccountService accountService;
 
@@ -96,6 +101,11 @@ public class MainActivity extends ActionBarActivity {
 			mResourcesImpl = new ResourcesImpl(this, super.getResources());
 		}
 		return mResourcesImpl;
+	}
+
+	@Override
+	public void onTrackableListItemSelected(Uri itemUri) {
+		Timber.d(itemUri.toString());
 	}
 
 	private static class ResourcesImpl extends Resources {

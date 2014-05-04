@@ -2,6 +2,7 @@ package com.arcao.wmt.ui.fragment;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -9,10 +10,12 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
-
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+
 import com.activeandroid.Model;
 import com.activeandroid.content.ContentProvider;
 import com.arcao.wmt.R;
@@ -20,12 +23,18 @@ import com.arcao.wmt.data.database.model.FavoritedTrackableModel;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.ui.task.UpdateMyTrackablesTask;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class TrackableListFragment extends AbstractListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String TYPE = "TYPE";
 	private static final int TRACKABLE_LOADER = 100;
+
+	public interface TrackableListListener {
+		void onTrackableListItemSelected(Uri itemUri);
+	}
 
 	public enum Type {
 		My,
@@ -37,6 +46,8 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 
 	private CursorAdapter mAdapter;
 	private Type type;
+	private Class<? extends Model> modelClass;
+	private WeakReference<TrackableListListener> trackableListListenerReference;
 
 	public TrackableListFragment() {
 	}
@@ -54,7 +65,25 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+
+		try {
+			trackableListListenerReference = new WeakReference<>((TrackableListListener)activity);
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " must implement TrackableListListener");
+		}
+
 		type = Type.values()[getArguments().getInt(TYPE)];
+
+		switch(type) {
+			case Favorited:
+				modelClass = FavoritedTrackableModel.class;
+				break;
+			case My:
+			default:
+				modelClass = MyTrackableModel.class;
+				break;
+		}
+
 		setHasOptionsMenu(true);
 	}
 
@@ -84,17 +113,6 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 	@Override
 	@SuppressWarnings("unchecked")
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
-		Class<? extends Model> modelClass;
-		switch(type) {
-			case Favorited:
-				modelClass = FavoritedTrackableModel.class;
-				break;
-			case My:
-			default:
-				modelClass = MyTrackableModel.class;
-				break;
-		}
-
 		switch (loaderID) {
 			case TRACKABLE_LOADER:
 				return new CursorLoader(getActivity().getApplicationContext(),
@@ -145,6 +163,14 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
 
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		TrackableListListener listener = trackableListListenerReference.get();
+		if (listener != null) {
+			Uri uri = ContentProvider.createUri(modelClass, id);
+			listener.onTrackableListItemSelected(uri);
+		}
 	}
 }
