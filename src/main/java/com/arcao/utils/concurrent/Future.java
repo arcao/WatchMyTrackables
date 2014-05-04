@@ -1,4 +1,4 @@
 package com.arcao.utils.concurrent;
 
-public interface Future<T> extends Cancellable, java.util.concurrent.Future<T> {
+public interface Future<Value> extends Cancellable, java.util.concurrent.Future<Value> {
 }

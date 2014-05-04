@@ -56,7 +56,7 @@ public class FutureTask<Key, Value> implements Future<Value> {
 	public synchronized Value get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 		long deadLine = unit.toMillis(timeout);
 
-		while (!done && !cancelled && deadLine - System.currentTimeMillis() > 0L) {
+		while (!done && !cancelled && deadLine > System.currentTimeMillis()) {
 			((Object)this).wait(deadLine - System.currentTimeMillis());
 		}
 

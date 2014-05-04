@@ -2,12 +2,6 @@ package com.arcao.utils.concurrent;
 
 public interface Cancellable {
 	/**
-	 * Check whether this asynchronous operation completed successfully.
-	 * @return
-	 */
-	boolean isDone();
-
-	/**
 	 * Check whether this asynchronous operation has been cancelled.
 	 * @return
 	 */
