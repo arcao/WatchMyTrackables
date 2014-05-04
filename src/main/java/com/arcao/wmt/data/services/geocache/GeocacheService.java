@@ -5,6 +5,9 @@ import android.os.Looper;
 import com.arcao.geocaching.api.GeocachingApi;
 import com.arcao.geocaching.api.data.SimpleGeocache;
 import com.arcao.utils.cache.Cache;
+import com.arcao.utils.concurrent.FutureCallback;
+import com.arcao.utils.concurrent.FutureTask;
+
 import org.apache.commons.lang3.builder.Builder;
 
 import java.util.ArrayList;
@@ -13,31 +16,29 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class GeocacheService {
-	private final Context context;
 	private final Executor executor;
 	private final Executor downloadExecutor;
 	protected final GeocachingApi geocachingApi;
 	protected final Cache<String, SimpleGeocache> cache;
 	protected final DispatcherHandler handler;
-	protected final List<GetGeocacheRequest> requests;
+	protected final List<FutureTask<String, SimpleGeocache>> tasks;
 
-	private GeocacheService(Context context, Executor executor, Executor downloadExecutor, GeocachingApi geocachingApi, Cache<String, SimpleGeocache> cache, DispatcherHandler handler) {
-		this.context = context;
+	private GeocacheService(Executor executor, Executor downloadExecutor, GeocachingApi geocachingApi, Cache<String, SimpleGeocache> cache, DispatcherHandler handler) {
 		this.executor = executor;
 		this.downloadExecutor = downloadExecutor;
 		this.geocachingApi = geocachingApi;
 		this.cache = cache;
 		this.handler = handler;
 
-		requests = new ArrayList<>();
+		tasks = new ArrayList<>();
 	}
 
-	public GetGeocacheRequest getGeocache(final String cacheCode) {
+	public FutureTask<String, SimpleGeocache> getGeocache(final String cacheCode) {
 		return getGeocache(cacheCode, null);
 	}
 
-	public GetGeocacheRequest getGeocache(final String cacheCode, final GetGeocacheTarget target) {
-		final GetGeocacheRequest request = new GetGeocacheRequest(cacheCode, target);
+	public FutureTask<String, SimpleGeocache> getGeocache(final String cacheCode, final FutureCallback<SimpleGeocache> callback) {
+		final FutureTask<String, SimpleGeocache> task = new FutureTask<>(cacheCode, callback);
 
 		executor.execute(new Runnable() {
 			@Override
@@ -45,14 +46,14 @@ public class GeocacheService {
 				SimpleGeocache data = cache.get(cacheCode);
 
 				if (data != null) {
-					handler.dispatchGetGeocache(request, data, null);
+					handler.dispatchResult(task, data, null);
 					return;
 				}
 
-				synchronized (requests) {
-					requests.add(request);
+				synchronized (tasks) {
+					tasks.add(task);
 
-					if (requests.size() == 1) {
+					if (tasks.size() == 1) {
 						downloadExecutor.execute(new GeocacheDownloader(GeocacheService.this));
 					}
 				}
@@ -60,7 +61,7 @@ public class GeocacheService {
 			}
 		});
 
-		return request;
+		return task;
 	}
 
 	public static class GeocacheServiceBuilder implements Builder<GeocacheService> {
@@ -88,7 +89,7 @@ public class GeocacheService {
 				cache = new GeocacheFileCache(context);
 			}
 
-			return new GeocacheService(context, executor, downloadExecutor, geocachingApi, cache, handler);
+			return new GeocacheService(executor, downloadExecutor, geocachingApi, cache, handler);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.arcao.geocaching.api.data.SimpleGeocache;
+import com.arcao.utils.concurrent.FutureTask;
 
 public class DispatcherHandler extends Handler {
 	public static final int GET_GEOCACHE_COMPLETE = 1;
@@ -13,31 +14,31 @@ public class DispatcherHandler extends Handler {
 		super(looper);
 	}
 
-	public void dispatchGetGeocache(GetGeocacheRequest request, SimpleGeocache data, Throwable t) {
-		obtainMessage(GET_GEOCACHE_COMPLETE, new GetGeocacheResult(request, data, t)).sendToTarget();
+	public void dispatchResult(FutureTask<String, SimpleGeocache> task, SimpleGeocache data, Throwable t) {
+		obtainMessage(GET_GEOCACHE_COMPLETE, new Result(task, data, t)).sendToTarget();
 	}
 
 	@Override
 	public void handleMessage(final Message msg) {
 		switch (msg.what) {
 			case GET_GEOCACHE_COMPLETE:
-				GetGeocacheResult result = (GetGeocacheResult) msg.obj;
-				result.request.publish(result.data, result.t);
+				Result result = (Result) msg.obj;
+				result.task.publish(result.exception, result.data);
 				break;
 			default:
 				super.handleMessage(msg);
 		}
 	}
 
-	private static class GetGeocacheResult {
-		protected final GetGeocacheRequest request;
+	private static class Result {
+		protected final FutureTask<String, SimpleGeocache> task;
 		protected final SimpleGeocache data;
-		protected final Throwable t;
+		protected final Throwable exception;
 
-		private GetGeocacheResult(GetGeocacheRequest request, SimpleGeocache data, Throwable t) {
-			this.request = request;
+		private Result(FutureTask<String, SimpleGeocache> task, SimpleGeocache data, Throwable exception) {
+			this.task = task;
 			this.data = data;
-			this.t = t;
+			this.exception = exception;
 		}
 	}
 }
