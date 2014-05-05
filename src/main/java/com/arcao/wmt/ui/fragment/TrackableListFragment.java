@@ -2,9 +2,7 @@ package com.arcao.wmt.ui.fragment;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,9 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-import com.activeandroid.Model;
 import com.activeandroid.content.ContentProvider;
 import com.arcao.wmt.R;
+import com.arcao.wmt.data.database.model.AbstractTrackableModel;
 import com.arcao.wmt.data.database.model.FavoritedTrackableModel;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.ui.task.UpdateMyTrackablesTask;
@@ -28,41 +26,38 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-public class TrackableListFragment extends AbstractListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-	private static final String TYPE = "TYPE";
+import timber.log.Timber;
+
+public class TrackableListFragment<M extends AbstractTrackableModel> extends AbstractListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+	private static final String MODEL = "MODEL";
 	private static final int TRACKABLE_LOADER = 100;
 
 	public interface TrackableListListener {
-		void onTrackableListItemSelected(Uri itemUri);
-	}
-
-	public enum Type {
-		My,
-		Favorited
+		void onTrackableSelected(Class<? extends AbstractTrackableModel> modelClass, long id);
 	}
 
 	@Inject
 	Provider<UpdateMyTrackablesTask> updateMyTrackablesTaskProvider;
 
 	private CursorAdapter mAdapter;
-	private Type type;
-	private Class<? extends Model> modelClass;
+	private Class<M> modelClass;
 	private WeakReference<TrackableListListener> trackableListListenerReference;
 
 	public TrackableListFragment() {
 	}
 
-	public static ListFragment newInstance(Type type) {
-		ListFragment fragment = new TrackableListFragment();
+	public static <M extends AbstractTrackableModel> TrackableListFragment<M> newInstance(Class<M> modelClass) {
+		TrackableListFragment<M> fragment = new TrackableListFragment<>();
 
 		Bundle args = new Bundle();
-		args.putInt(TYPE, type.ordinal());
+		args.putString(MODEL, modelClass.getName());
 
 		fragment.setArguments(args);
 		return fragment;
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
@@ -72,16 +67,10 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 			throw new ClassCastException(activity.toString() + " must implement TrackableListListener");
 		}
 
-		type = Type.values()[getArguments().getInt(TYPE)];
-
-		switch(type) {
-			case Favorited:
-				modelClass = FavoritedTrackableModel.class;
-				break;
-			case My:
-			default:
-				modelClass = MyTrackableModel.class;
-				break;
+		try {
+			modelClass = (Class<M>) Class.forName(getArguments().getString(MODEL));
+		} catch (ClassNotFoundException e) {
+			Timber.e(e, e.getMessage());
 		}
 
 		setHasOptionsMenu(true);
@@ -99,6 +88,7 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 						0);
 
 		getListView().setAdapter(mAdapter);
+		//getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
 		setListShown(false);
 		getActivity().getSupportLoaderManager().initLoader(TRACKABLE_LOADER, null, this);
@@ -138,13 +128,10 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		switch (type) {
-			case My:
-				inflater.inflate(R.menu.fragment_trackables_my, menu);
-				break;
-			case Favorited:
-				inflater.inflate(R.menu.fragment_trackables_favorited, menu);
-				break;
+		if (modelClass == MyTrackableModel.class) {
+			inflater.inflate(R.menu.fragment_trackables_my, menu);
+		} else if (modelClass == FavoritedTrackableModel.class) {
+			inflater.inflate(R.menu.fragment_trackables_favorited, menu);
 		}
 	}
 
@@ -153,11 +140,9 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
 			case R.id.action_refresh:
-				if (type == Type.My) {
+				if (modelClass == MyTrackableModel.class) {
 					setListShown(false);
 					updateMyTrackablesTaskProvider.get().execute();
-				} else {
-
 				}
 				return true;
 			default:
@@ -169,8 +154,7 @@ public class TrackableListFragment extends AbstractListFragment implements Loade
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		TrackableListListener listener = trackableListListenerReference.get();
 		if (listener != null) {
-			Uri uri = ContentProvider.createUri(modelClass, id);
-			listener.onTrackableListItemSelected(uri);
+			listener.onTrackableSelected(modelClass, id);
 		}
 	}
 }
