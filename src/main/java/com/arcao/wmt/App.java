@@ -3,16 +3,14 @@ package com.arcao.wmt;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
-
-import java.util.UUID;
+import dagger.ObjectGraph;
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 import javax.inject.Inject;
-
-import dagger.ObjectGraph;
-import timber.log.Timber;
+import java.util.UUID;
 
 public class App extends Application {
 	private ObjectGraph objectGraph;
@@ -37,7 +35,7 @@ public class App extends Application {
 		ActiveAndroid.dispose();
 	}
 
-	//@DebugLog
+	@DebugLog
 	public void buildObjectGraphAndInject() {
 		objectGraph = ObjectGraph.create(Modules.list(this));
 		objectGraph.inject(this);
