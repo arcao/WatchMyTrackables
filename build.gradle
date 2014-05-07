@@ -65,7 +65,6 @@ if (!project.hasProperty('geocachingApiStaging')) {
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.3"
-    useOldManifestMerger false
 
     dexOptions {
       // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -88,11 +87,10 @@ android {
 
     buildTypes {
         debug {
-            packageNameSuffix '.dev'
-            versionNameSuffix '-dev'
+            packageNameSuffix '.debug'
+            versionNameSuffix '-debug'
         }
         release {
-            packageNameSuffix '.rel'
             signingConfig signingConfigs.release
             runProguard true
             proguardFile getDefaultProguardFile('proguard-android.txt')

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Authority -->
+    <string name="config_authority">com.arcao.wmt.debug</string>
+</resources>
