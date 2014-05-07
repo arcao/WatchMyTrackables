@@ -26,7 +26,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'com.jakewharton:butterknife:5.0.+'
     compile 'com.jakewharton.timber:timber:2.2.2'
-    compile 'com.android.support:appcompat-v7:19.+'
     compile('com.arcao:geocaching-api:1.5.22') {
       exclude group: 'log4j', module: 'log4j' /* Not working in Android, log4j-over-slf4j used instead */
     }

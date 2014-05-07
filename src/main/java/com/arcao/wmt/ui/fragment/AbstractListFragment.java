@@ -1,7 +1,7 @@
 package com.arcao.wmt.ui.fragment;
 
 import android.app.Activity;
-import android.support.v4.app.ListFragment;
+import android.app.ListFragment;
 import com.arcao.wmt.App;
 
 public abstract class AbstractListFragment extends ListFragment {

@@ -3,13 +3,13 @@ package com.arcao.wmt.ui.fragment.dialog;
 import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,23 +17,20 @@ import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.arcao.wmt.App;
 import com.arcao.wmt.R;
 import com.arcao.wmt.constant.AppConstants;
 import com.arcao.wmt.data.services.account.AccountService;
 import com.arcao.wmt.ui.task.OAuthLoginTask;
-
-import java.lang.ref.WeakReference;
-import java.util.Locale;
+import oauth.signpost.OAuth;
+import timber.log.Timber;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import oauth.signpost.OAuth;
-import timber.log.Timber;
+import java.lang.ref.WeakReference;
+import java.util.Locale;
 
 public class OAuthLoginDialogFragment extends AbstractDialogFragment implements OAuthLoginTask.OAuthLoginTaskListener {
 	private static final String STATE_PROGRESS_VISIBLE = "STATE_PROGRESS_VISIBLE";

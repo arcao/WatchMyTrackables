@@ -1,7 +1,7 @@
 package com.arcao.wmt.ui.fragment;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import com.arcao.wmt.App;
 
 public abstract class AbstractFragment extends Fragment {

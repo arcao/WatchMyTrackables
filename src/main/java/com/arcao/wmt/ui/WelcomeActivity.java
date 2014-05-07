@@ -1,13 +1,14 @@
 package com.arcao.wmt.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.arcao.wmt.App;
 import com.arcao.wmt.R;
 import com.arcao.wmt.data.services.account.AccountService;
@@ -15,10 +16,7 @@ import com.arcao.wmt.ui.fragment.dialog.OAuthLoginDialogFragment;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
-public class WelcomeActivity extends FragmentActivity implements OAuthLoginDialogFragment.OnTaskFinishedListener {
+public class WelcomeActivity extends Activity implements OAuthLoginDialogFragment.OnTaskFinishedListener {
 	@InjectView(R.id.buttonSign)
 	Button buttonSign;
 
@@ -40,7 +38,7 @@ public class WelcomeActivity extends FragmentActivity implements OAuthLoginDialo
 		buttonSign.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				OAuthLoginDialogFragment.newInstance().show(getSupportFragmentManager(), "login");
+				OAuthLoginDialogFragment.newInstance().show(getFragmentManager(), "login");
 			}
 		});
 

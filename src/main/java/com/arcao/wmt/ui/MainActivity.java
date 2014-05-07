@@ -1,18 +1,16 @@
 package com.arcao.wmt.ui;
 
-import android.content.Context;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.app.ListFragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import com.arcao.wmt.App;
 import com.arcao.wmt.R;
 import com.arcao.wmt.data.database.model.AbstractTrackableModel;
@@ -20,15 +18,13 @@ import com.arcao.wmt.data.database.model.FavoritedTrackableModel;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.data.services.account.AccountService;
 import com.arcao.wmt.ui.fragment.TrackableListFragment;
+import timber.log.Timber;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import timber.log.Timber;
-
-public class MainActivity extends ActionBarActivity implements TrackableListFragment.TrackableListListener {
+public class MainActivity extends Activity implements TrackableListFragment.TrackableListListener {
 	@Inject
 	AccountService accountService;
 
@@ -39,7 +35,7 @@ public class MainActivity extends ActionBarActivity implements TrackableListFrag
 		App.get(this).inject(this);
 		setContentView(R.layout.activity_main);
 
-		ActionBar actionBar = getSupportActionBar();
+		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -100,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements TrackableListFrag
 	@Override
 	public Resources getResources() {
 		if (mResourcesImpl == null) {
-			mResourcesImpl = new ResourcesImpl(this, super.getResources());
+			mResourcesImpl = new FilteredResources(super.getResources());
 		}
 		return mResourcesImpl;
 	}
@@ -110,20 +106,14 @@ public class MainActivity extends ActionBarActivity implements TrackableListFrag
 		Timber.d(modelClass.getSimpleName() + ": " + id);
 	}
 
-	private static class ResourcesImpl extends Resources {
-		private Resources mResources;
+	private static class FilteredResources extends Resources {
 		private Set<Integer> mActionBarEmbedTabsIds = new HashSet<>();
 
-		ResourcesImpl(Context context, Resources resources) {
+		FilteredResources(Resources resources) {
 			super(resources.getAssets(), resources.getDisplayMetrics(), resources.getConfiguration());
 
-			mResources = resources;
-
-			String packageName = context.getPackageName();
-			mActionBarEmbedTabsIds.add(mResources.getIdentifier("abc_action_bar_embed_tabs", "bool", packageName));
-			mActionBarEmbedTabsIds.add(mResources.getIdentifier("abc_action_bar_embed_tabs_pre_jb", "bool", packageName));
-			mActionBarEmbedTabsIds.add(mResources.getIdentifier("action_bar_embed_tabs", "bool", "android"));
-			mActionBarEmbedTabsIds.add(mResources.getIdentifier("action_bar_embed_tabs_pre_jb", "bool", "android"));
+			mActionBarEmbedTabsIds.add(resources.getIdentifier("action_bar_embed_tabs", "bool", "android"));
+			mActionBarEmbedTabsIds.add(resources.getIdentifier("action_bar_embed_tabs_pre_jb", "bool", "android"));
 			mActionBarEmbedTabsIds.remove(0);
 		}
 

@@ -1,32 +1,29 @@
 package com.arcao.wmt.ui.fragment;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-
+import android.widget.SimpleCursorAdapter;
 import com.activeandroid.content.ContentProvider;
 import com.arcao.wmt.R;
 import com.arcao.wmt.data.database.model.AbstractTrackableModel;
 import com.arcao.wmt.data.database.model.FavoritedTrackableModel;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.ui.task.UpdateMyTrackablesTask;
-
-import java.lang.ref.WeakReference;
+import timber.log.Timber;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import timber.log.Timber;
+import java.lang.ref.WeakReference;
 
 public class TrackableListFragment<M extends AbstractTrackableModel> extends AbstractListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String MODEL = "MODEL";
@@ -91,12 +88,12 @@ public class TrackableListFragment<M extends AbstractTrackableModel> extends Abs
 		//getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
 		setListShown(false);
-		getActivity().getSupportLoaderManager().initLoader(TRACKABLE_LOADER, null, this);
+		getActivity().getLoaderManager().initLoader(TRACKABLE_LOADER, null, this);
 	}
 
 	@Override
 	public void onDestroyView() {
-		getActivity().getSupportLoaderManager().destroyLoader(TRACKABLE_LOADER);
+		getActivity().getLoaderManager().destroyLoader(TRACKABLE_LOADER);
 		super.onDestroyView();
 	}
 
