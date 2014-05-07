@@ -36,7 +36,6 @@ public class MainActivity extends Activity implements TrackableListFragment.Trac
 		setContentView(R.layout.activity_main);
 
 		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setDisplayShowHomeEnabled(false);
