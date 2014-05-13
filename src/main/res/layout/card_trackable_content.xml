@@ -23,14 +23,4 @@
         android:textSize="14sp"
         android:textColor="@android:color/darker_gray"
         />
-    <TextView
-        android:id="@+id/card_goal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-
-        android:textSize="12sp"
-        android:textColor="@android:color/darker_gray"
-        android:ellipsize="end"
-        />
-
 </LinearLayout>

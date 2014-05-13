@@ -1,7 +1,6 @@
 package com.arcao.wmt.ui.widget.card;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,8 +25,6 @@ public class TrackableCard extends Card {
 	TextView cardTitle;
 	@InjectView(R.id.card_subTitle)
 	TextView cardSubTitle;
-	@InjectView(R.id.card_goal)
-	TextView cardGoal;
 
 	public TrackableCard(Context context, AbstractTrackableModel model) {
 		super(context, R.layout.card_trackable_content);
@@ -47,7 +44,6 @@ public class TrackableCard extends Card {
 
 		cardTitle.setText(model.trackingNumber);
 		cardSubTitle.setText(model.name);
-		cardGoal.setText(Html.fromHtml(model.goal).toString());
 	}
 
 	private static class TrackableThumbnail extends CardThumbnail {
@@ -66,9 +62,8 @@ public class TrackableCard extends Card {
 		@Override
 		public void setupInnerViewElements(ViewGroup parent, View view) {
 			ImageView imageView = (ImageView) view;
-			//imageView.getLayoutParams().width = 64;
-			//imageView.getLayoutParams().height = 64;
 			imageView.setScaleType(ImageView.ScaleType.CENTER);
+			imageView.setBackgroundResource(android.R.color.white);
 
 			if (model.images.size() > 0) {
 				picasso.load(model.images.get(0).getThumbUrl())
