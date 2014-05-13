@@ -2,8 +2,8 @@ package com.arcao.wmt.ui;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.ListFragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -17,14 +17,14 @@ import com.arcao.wmt.data.database.model.AbstractTrackableModel;
 import com.arcao.wmt.data.database.model.FavoritedTrackableModel;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.data.services.account.AccountService;
-import com.arcao.wmt.ui.fragment.TrackableListFragment;
+import com.arcao.wmt.ui.fragment.TrackablesFragment;
 import timber.log.Timber;
 
 import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MainActivity extends Activity implements TrackableListFragment.TrackableListListener {
+public class MainActivity extends Activity implements TrackablesFragment.TrackablesListener {
 	@Inject
 	AccountService accountService;
 
@@ -124,7 +124,7 @@ public class MainActivity extends Activity implements TrackableListFragment.Trac
 
 	private static class TabListener implements ActionBar.TabListener {
 		protected final Class<? extends AbstractTrackableModel> modelClass;
-		protected ListFragment listFragment;
+		protected Fragment fragment;
 
 		public TabListener(Class<? extends AbstractTrackableModel> modelClass) {
 			this.modelClass = modelClass;
@@ -132,17 +132,17 @@ public class MainActivity extends Activity implements TrackableListFragment.Trac
 
 		@Override
 		public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-			if (listFragment == null) {
-				listFragment = TrackableListFragment.newInstance(modelClass);
-				fragmentTransaction.replace(R.id.content, listFragment, modelClass.getSimpleName());
+			if (fragment == null) {
+				fragment = TrackablesFragment.newInstance(modelClass);
+				fragmentTransaction.replace(R.id.content, fragment, modelClass.getSimpleName());
 			} else {
-				fragmentTransaction.attach(listFragment);
+				fragmentTransaction.attach(fragment);
 			}
 		}
 
 		@Override
 		public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-			fragmentTransaction.detach(listFragment);
+			fragmentTransaction.detach(fragment);
 		}
 
 		@Override
