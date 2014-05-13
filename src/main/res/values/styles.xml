@@ -41,5 +41,9 @@
 
     <style name="PopupTheme" parent="PopupBaseTheme">
     </style>
+
+    <style name="card.content_outer_layout.trackable">
+        <item name="android:minHeight">@dimen/card_thumbnail_width</item>
+    </style>
 </resources>
 
