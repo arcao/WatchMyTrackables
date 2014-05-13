@@ -35,6 +35,7 @@ public class ImageDataCollectionSerializer extends TypeSerializer {
 			for (ImageData imageData : ((ImageDataCollection) data)) {
 				ImageDataMarshaller.INSTANCE.to(oos, imageData);
 			}
+			oos.flush();
 			return bos.toByteArray();
 		} catch (IOException e) {
 			Timber.e(e, e.getMessage());
@@ -49,7 +50,7 @@ public class ImageDataCollectionSerializer extends TypeSerializer {
 		ImageDataCollection collection = new ImageDataCollection();
 		ByteArrayInputStream bis = null;
 
-		if (data == null)
+		if (data == null || ((byte[]) data).length ==0)
 			return null;
 
 		try {

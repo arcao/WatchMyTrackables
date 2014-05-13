@@ -28,7 +28,9 @@ public class UserSerializer extends TypeSerializer {
 
 		try {
 			bos = new ByteArrayOutputStream();
-			UserMarshaller.INSTANCE.to(new ObjectOutputStream(bos), (User) data);
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			UserMarshaller.INSTANCE.to(oos, (User) data);
+			oos.flush();
 			return bos.toByteArray();
 		} catch (IOException e) {
 			Timber.e(e, e.getMessage());
@@ -40,7 +42,7 @@ public class UserSerializer extends TypeSerializer {
 
 	@Override
 	public Object deserialize(Object data) {
-		if (data == null)
+		if (data == null || ((byte[]) data).length ==0)
 			return null;
 
 		ByteArrayInputStream bis = null;

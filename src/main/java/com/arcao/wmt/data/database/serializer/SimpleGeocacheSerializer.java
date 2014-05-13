@@ -25,7 +25,9 @@ public class SimpleGeocacheSerializer extends TypeSerializer {
 
 		try {
 			bos = new ByteArrayOutputStream();
-			SimpleGeocacheMarshaller.INSTANCE.to(new ObjectOutputStream(bos), (SimpleGeocache) data);
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			SimpleGeocacheMarshaller.INSTANCE.to(oos, (SimpleGeocache) data);
+			oos.flush();
 			return bos.toByteArray();
 		} catch (IOException e) {
 			Timber.e(e, e.getMessage());
