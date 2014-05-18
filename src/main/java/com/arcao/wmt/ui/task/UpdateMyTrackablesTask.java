@@ -16,6 +16,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implements UpdateTrackablesTask {
+	private static final int TRACKABLES_PER_REQUEST = 30;
+
 	private GeocachingApi api;
 	private App app;
 	private WeakReference<OnFinishedListener> listenerRef;
@@ -34,13 +36,21 @@ public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implemen
 	@Override
 	protected Void doInBackground(Void... params) {
 		try {
-			List<Trackable> trackables = api.getUsersTrackables(0, 30, 0, false);
-			ActiveAndroid.beginTransaction();
 			try {
+				ActiveAndroid.beginTransaction();
+				List<Trackable> trackables = api.getUsersTrackables(0, TRACKABLES_PER_REQUEST, 0, false);
 				ModelUtils.truncate(MyTrackableModel.class);
-				for (Trackable trackable : trackables) {
-					new MyTrackableModel(trackable).save();
+
+				storeTrackables(trackables);
+
+				// retrieve rest
+				int start = 0;
+				while (trackables.size() == TRACKABLES_PER_REQUEST) {
+					start += TRACKABLES_PER_REQUEST;
+					trackables = api.getUsersTrackables(start, TRACKABLES_PER_REQUEST, 0, false);
+					storeTrackables(trackables);
 				}
+
 				ActiveAndroid.setTransactionSuccessful();
 			}
 			finally {
@@ -53,6 +63,12 @@ public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implemen
 		}
 
 		return null;
+	}
+
+	private void storeTrackables(List<Trackable> trackables) {
+		for (Trackable trackable : trackables) {
+			new MyTrackableModel(trackable).save();
+		}
 	}
 
 	@Override
