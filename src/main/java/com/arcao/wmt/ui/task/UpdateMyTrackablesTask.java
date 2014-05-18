@@ -3,12 +3,12 @@ package com.arcao.wmt.ui.task;
 import android.os.AsyncTask;
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.content.ContentProvider;
-import com.activeandroid.query.Delete;
 import com.arcao.geocaching.api.GeocachingApi;
 import com.arcao.geocaching.api.data.Trackable;
 import com.arcao.geocaching.api.exception.GeocachingApiException;
 import com.arcao.wmt.App;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
+import com.arcao.wmt.data.database.util.ModelUtils;
 import timber.log.Timber;
 
 import javax.inject.Inject;
@@ -37,7 +37,7 @@ public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implemen
 			List<Trackable> trackables = api.getUsersTrackables(0, 30, 0, false);
 			ActiveAndroid.beginTransaction();
 			try {
-				new Delete().from(MyTrackableModel.class).execute();
+				ModelUtils.truncate(MyTrackableModel.class);
 				for (Trackable trackable : trackables) {
 					new MyTrackableModel(trackable).save();
 				}

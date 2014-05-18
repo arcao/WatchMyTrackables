@@ -1,6 +1,7 @@
 package com.arcao.wmt.data.database.util;
 
 import android.database.Cursor;
+import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Cache;
 import com.activeandroid.Model;
 import com.activeandroid.TableInfo;
@@ -43,5 +44,12 @@ public class ModelUtils {
 		}
 
 		return null;
+	}
+
+	public static void truncate(Class<? extends Model> type){
+		TableInfo tableInfo = Cache.getTableInfo(type);
+		// Not the cleanest way, but...
+		ActiveAndroid.execSQL("delete from " + tableInfo.getTableName() + ";");
+		ActiveAndroid.execSQL("delete from sqlite_sequence where name='"+tableInfo.getTableName()+"';");
 	}
 }
