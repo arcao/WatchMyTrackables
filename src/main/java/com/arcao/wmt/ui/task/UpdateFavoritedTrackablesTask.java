@@ -40,6 +40,9 @@ public class UpdateFavoritedTrackablesTask extends AsyncTask<Void, Void, Void> i
 				List<FavoritedTrackableModel> items = new Select().from(FavoritedTrackableModel.class).execute();
 				for (FavoritedTrackableModel item : items) {
 					Trackable trackable = api.getTrackable(item.trackingNumber, 0);
+					if (trackable == null)
+						continue;
+
 					item.apply(trackable);
 					item.save();
 				}
