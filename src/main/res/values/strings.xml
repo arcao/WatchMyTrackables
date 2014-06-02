@@ -5,4 +5,8 @@
     <string name="tab_my">My</string>
     <string name="tab_favorited">Favorited</string>
     <string name="tab_empty" />
+
+    <string name="tab_trackable">Trackable</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_statistics">Statistics</string>
 </resources>
