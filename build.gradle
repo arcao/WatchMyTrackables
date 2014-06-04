@@ -35,7 +35,7 @@ dependencies {
     }
     compile 'org.slf4j:log4j-over-slf4j:1.7.7'
     compile 'com.arcao:slf4j-timber:1.+'
-    compile('com.activeandroid:activeandroid:3.1-2') {
+    compile('com.activeandroid:activeandroid:3.1-3') {
       exclude group: 'com.google.android', module: 'support-v4' // Used SDK bundled artifact instead
     }
     compile 'com.github.gabrielemariotti.cards:library:1.6.0'
@@ -63,7 +63,7 @@ if (!project.hasProperty('geocachingApiStaging')) {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion "19.1.0"
 
     dexOptions {
       // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
