@@ -38,6 +38,9 @@
         <activity
             android:name=".ui.WelcomeActivity"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.TrackableActivity"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

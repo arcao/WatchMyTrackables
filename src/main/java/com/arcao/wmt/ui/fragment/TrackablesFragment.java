@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.*;
-import android.widget.AdapterView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.activeandroid.content.ContentProvider;
@@ -33,7 +32,7 @@ import java.lang.ref.WeakReference;
 /**
  * Created by msloup on 11.5.2014.
  */
-public class TrackablesFragment<M extends AbstractTrackableModel> extends AbstractFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, FinishableTask.OnFinishedListener {
+public class TrackablesFragment<M extends AbstractTrackableModel> extends AbstractFragment implements LoaderManager.LoaderCallbacks<Cursor>, TrackableCardCursorAdapter.TrackableCardListener, SwipeRefreshLayout.OnRefreshListener, FinishableTask.OnFinishedListener {
 	private static final String MODEL = "MODEL";
 	private static final int TRACKABLE_LOADER = 100;
 
@@ -94,10 +93,9 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		mAdapter = new TrackableCardCursorAdapter<>(getActivity(), modelClass);
+		mAdapter = new TrackableCardCursorAdapter<>(getActivity(), modelClass, this);
 
 		grid.setAdapter(mAdapter);
-		grid.setOnItemClickListener(this);
 		getActivity().getLoaderManager().initLoader(TRACKABLE_LOADER, null, this);
 
 		swipeLayout.setOnRefreshListener(this);
@@ -204,7 +202,7 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void onTrackableCardClick(Class<? extends AbstractTrackableModel> modelClass, long id) {
 		TrackablesListener listener = trackablesListenerReference.get();
 		if (listener != null) {
 			listener.onTrackableSelected(modelClass, id);

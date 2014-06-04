@@ -15,6 +15,7 @@ import dagger.Module;
 				injects = {
 								MainActivity.class,
 								WelcomeActivity.class,
+								TrackableActivity.class
 				},
 				complete = false,
 				library = true

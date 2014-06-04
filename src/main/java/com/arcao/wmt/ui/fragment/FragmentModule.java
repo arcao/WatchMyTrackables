@@ -8,6 +8,9 @@ import dagger.Module;
 @Module(
 				injects = {
 								TrackablesFragment.class,
+								TrackableDetailFragment.class,
+								TrackableMapFragment.class,
+								TrackableStatisticsFragment.class,
 								OAuthLoginDialogFragment.class,
 								AddFavoritedTrackableDialogFragment.class
 				},

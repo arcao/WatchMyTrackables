@@ -14,10 +14,12 @@ import it.gmariotti.cardslib.library.internal.CardGridCursorAdapter;
  */
 public class TrackableCardCursorAdapter<M extends AbstractTrackableModel> extends CardGridCursorAdapter {
 	private final Class<M> modelClass;
+	private final TrackableCardListener listener;
 
-	public TrackableCardCursorAdapter(Context context, Class<M> modelClass) {
+	public TrackableCardCursorAdapter(Context context, Class<M> modelClass, TrackableCardListener listener) {
 		super(context);
 		this.modelClass = modelClass;
+		this.listener = listener;
 	}
 
 	@Override
@@ -28,10 +30,14 @@ public class TrackableCardCursorAdapter<M extends AbstractTrackableModel> extend
 		card.setOnClickListener(new Card.OnCardClickListener() {
 			@Override
 			public void onClick(Card card, View view) {
-				getCardGridView().performItemClick(view, cursor.getPosition(), model.getId());
+				listener.onTrackableCardClick(modelClass, model.getId());
 			}
 		});
 
 		return card;
+	}
+
+	public interface TrackableCardListener {
+		void onTrackableCardClick(Class<? extends AbstractTrackableModel> modelClass, long id);
 	}
 }

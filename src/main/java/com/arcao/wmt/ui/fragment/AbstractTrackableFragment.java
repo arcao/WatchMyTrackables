@@ -12,7 +12,7 @@ public class AbstractTrackableFragment extends AbstractFragment {
 	private static final String ARG_ID = "ID";
 
 	protected Class<? extends AbstractTrackableModel> modelClass;
-	protected int id;
+	protected long id;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -24,13 +24,13 @@ public class AbstractTrackableFragment extends AbstractFragment {
 			Timber.e(e, e.getMessage());
 		}
 
-		id = getArguments().getInt(ARG_ID);
+		id = getArguments().getLong(ARG_ID);
 	}
 
-	protected static <M extends AbstractTrackableModel> Bundle createArguments(Class<M> modelClass, int id) {
+	protected static <M extends AbstractTrackableModel> Bundle createArguments(Class<M> modelClass, long id) {
 		Bundle args = new Bundle();
 		args.putString(ARG_MODEL, modelClass.getName());
-		args.putInt(ARG_ID, id);
+		args.putLong(ARG_ID, id);
 		return args;
 	}
 }
