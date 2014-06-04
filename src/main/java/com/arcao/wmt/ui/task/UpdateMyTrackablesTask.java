@@ -9,13 +9,14 @@ import com.arcao.geocaching.api.exception.GeocachingApiException;
 import com.arcao.wmt.App;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.data.database.util.ModelUtils;
+import com.arcao.wmt.ui.task.iface.FinishableTask;
 import timber.log.Timber;
 
 import javax.inject.Inject;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implements UpdateTrackablesTask {
+public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implements FinishableTask {
 	private static final int TRACKABLES_PER_REQUEST = 30;
 
 	private GeocachingApi api;
@@ -26,11 +27,6 @@ public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implemen
 	public UpdateMyTrackablesTask(App app, GeocachingApi api) {
 		this.app = app;
 		this.api = api;
-	}
-
-	@Override
-	public UpdateTrackablesTask execute() {
-		return (UpdateMyTrackablesTask) super.execute();
 	}
 
 	@Override
@@ -83,7 +79,7 @@ public class UpdateMyTrackablesTask extends AsyncTask<Void, Void, Void> implemen
 	}
 
 	@Override
-	public UpdateTrackablesTask setOnFinishedListener(OnFinishedListener listener) {
+	public FinishableTask setOnFinishedListener(OnFinishedListener listener) {
 		listenerRef = new WeakReference<>(listener);
 		return this;
 	}
