@@ -1,5 +1,6 @@
 package com.arcao.wmt.ui.fragment;
 
+import com.arcao.wmt.ui.fragment.dialog.AddFavoritedTrackableDialogFragment;
 import com.arcao.wmt.ui.fragment.dialog.OAuthLoginDialogFragment;
 
 import dagger.Module;
@@ -8,6 +9,7 @@ import dagger.Module;
 				injects = {
 								TrackablesFragment.class,
 								OAuthLoginDialogFragment.class,
+								AddFavoritedTrackableDialogFragment.class
 				},
 				complete = false,
 				library = true

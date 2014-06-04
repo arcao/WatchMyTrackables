@@ -9,4 +9,9 @@
     <string name="tab_trackable">Trackable</string>
     <string name="tab_map">Map</string>
     <string name="tab_statistics">Statistics</string>
+
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="trackable_add">Add Trackable</string>
+    <string name="trackable_retrieving">Retrieving %s</string>
 </resources>

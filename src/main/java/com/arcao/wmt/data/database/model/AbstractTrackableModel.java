@@ -52,7 +52,7 @@ public abstract class AbstractTrackableModel extends Model {
 		apply(trackable);
 	}
 
-	public void apply(Trackable trackable) {
+	public AbstractTrackableModel apply(Trackable trackable) {
 		trackableId = trackable.getId();
 		guid = trackable.getGuid();
 		name = trackable.getName();
@@ -71,5 +71,7 @@ public abstract class AbstractTrackableModel extends Model {
 		archived = trackable.isArchived();
 
 		images = new ImageDataCollection(trackable.getImages());
+
+		return this;
 	}
 }

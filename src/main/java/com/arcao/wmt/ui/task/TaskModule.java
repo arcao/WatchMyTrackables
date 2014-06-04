@@ -6,7 +6,8 @@ import dagger.Module;
 				injects = {
 								OAuthLoginTask.class,
 								UpdateMyTrackablesTask.class,
-								UpdateFavoritedTrackablesTask.class
+								UpdateFavoritedTrackablesTask.class,
+								AddFavoritedTrackableTask.class
 				},
 				complete = false,
 				library = true

@@ -18,9 +18,10 @@ import com.arcao.wmt.data.database.model.AbstractTrackableModel;
 import com.arcao.wmt.data.database.model.FavoritedTrackableModel;
 import com.arcao.wmt.data.database.model.MyTrackableModel;
 import com.arcao.wmt.ui.adapter.TrackableCardCursorAdapter;
+import com.arcao.wmt.ui.fragment.dialog.AddFavoritedTrackableDialogFragment;
 import com.arcao.wmt.ui.task.UpdateFavoritedTrackablesTask;
 import com.arcao.wmt.ui.task.UpdateMyTrackablesTask;
-import com.arcao.wmt.ui.task.UpdateTrackablesTask;
+import com.arcao.wmt.ui.task.iface.FinishableTask;
 import it.gmariotti.cardslib.library.internal.CardGridCursorAdapter;
 import it.gmariotti.cardslib.library.view.CardGridView;
 import timber.log.Timber;
@@ -32,7 +33,7 @@ import java.lang.ref.WeakReference;
 /**
  * Created by msloup on 11.5.2014.
  */
-public class TrackablesFragment<M extends AbstractTrackableModel> extends AbstractFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, UpdateTrackablesTask.OnFinishedListener {
+public class TrackablesFragment<M extends AbstractTrackableModel> extends AbstractFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, FinishableTask.OnFinishedListener {
 	private static final String MODEL = "MODEL";
 	private static final int TRACKABLE_LOADER = 100;
 
@@ -54,7 +55,7 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 	private CardGridCursorAdapter mAdapter;
 	private Class<M> modelClass;
 	private WeakReference<TrackablesListener> trackablesListenerReference;
-	private UpdateTrackablesTask updateTask;
+	private FinishableTask updateTask;
 
 	public TrackablesFragment() {
 	}
@@ -169,6 +170,8 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 			case R.id.action_refresh:
 				onRefresh();
 				return true;
+			case R.id.action_add:
+				AddFavoritedTrackableDialogFragment.newInstance().show(getFragmentManager(), AddFavoritedTrackableDialogFragment.class.getSimpleName());
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -183,14 +186,14 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 		}
 
 		if (modelClass == MyTrackableModel.class) {
-			updateTask = updateMyTrackablesTaskProvider.get();
+			updateTask = (FinishableTask) updateMyTrackablesTaskProvider.get().execute();
 		}
 		else if (modelClass == FavoritedTrackableModel.class) {
-			updateTask = updateFavoritedTrackablesTaskProvider.get();
+			updateTask = (FinishableTask) updateFavoritedTrackablesTaskProvider.get().execute();
 		}
 
 		if (updateTask != null) {
-			updateTask.setOnFinishedListener(this).execute();
+			updateTask.setOnFinishedListener(this);
 		}
 	}
 
