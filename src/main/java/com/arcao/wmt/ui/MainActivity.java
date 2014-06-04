@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MainActivity extends Activity implements TrackablesFragment.TrackablesListener {
+	private static final String STATE_TAB = "TAB";
+
 	@Inject
 	AccountService accountService;
 
@@ -58,9 +60,20 @@ public class MainActivity extends Activity implements TrackablesFragment.Trackab
 						.setTabListener(new TabListener(FavoritedTrackableModel.class));
 		actionBar.addTab(tab);
 
+		if (savedInstanceState != null) {
+			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(STATE_TAB, 0));
+		}
+
 		if (!accountService.hasAccount()) {
 			startActivityForResult(new Intent(this, WelcomeActivity.class), 0);
 		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putInt(STATE_TAB, getActionBar().getSelectedNavigationIndex());
 	}
 
 	@Override
@@ -103,6 +116,7 @@ public class MainActivity extends Activity implements TrackablesFragment.Trackab
 	@Override
 	public void onTrackableSelected(Class<? extends AbstractTrackableModel> modelClass, long id) {
 		Timber.d(modelClass.getSimpleName() + ": " + id);
+		startActivity(TrackableActivity.createIntent(this, modelClass, id));
 	}
 
 	private static class FilteredResources extends Resources {
