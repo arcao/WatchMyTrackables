@@ -45,6 +45,7 @@ dependencies {
 
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 def buildTime = new Date().format("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone("UTC"))
+def gitVersionCode = 'git rev-list --count HEAD'.execute([], project.rootDir).text.trim();
 
 def isTravis = "true".equals(System.getenv("TRAVIS"))
 def preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
@@ -71,6 +72,7 @@ android {
     }
 
     defaultConfig {
+        versionCode gitVersionCode
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         buildConfigField "String", "GEOCACHING_API_KEY", "\"${geocachingApiKey}\""
