@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 
 import com.arcao.wmt.data.database.DatabaseModule;
 import com.arcao.wmt.data.services.ServiceModule;
-import com.squareup.okhttp.HttpResponseCache;
+import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
@@ -72,8 +72,8 @@ public final class DataModule {
 		// Install an HTTP cache in the application cache directory.
 		try {
 			File cacheDir = new File(app.getCacheDir(), "http");
-			HttpResponseCache cache = new HttpResponseCache(cacheDir, DISK_CACHE_SIZE);
-			client.setResponseCache(cache);
+			Cache cache = new Cache(cacheDir, DISK_CACHE_SIZE);
+			client.setCache(cache);
 		} catch (IOException e) {
 			Timber.e(e, "Unable to install disk cache.");
 		}

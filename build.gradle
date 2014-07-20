@@ -22,7 +22,7 @@ dependencies {
     compile 'org.apache.commons:commons-io:1.3.2'
     compile 'org.apache.commons:commons-collections4:4.0'
     compile 'com.squareup.dagger:dagger:1.+'
-    compile 'com.squareup.okhttp:okhttp:2.+'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.+'
     compile 'com.squareup.picasso:picasso:2.+'
     compile 'com.jakewharton:butterknife:5.+'
     compile 'com.jakewharton.timber:timber:2.+'
@@ -95,7 +95,7 @@ android {
         release {
             signingConfig signingConfigs.release
             runProguard true
-            proguardFile getDefaultProguardFile('proguard-android.txt')
+            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
             proguardFile 'proguard.cfg'
         }
     }

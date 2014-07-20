@@ -6,71 +6,66 @@ import com.arcao.geocaching.api.exception.NetworkException;
 import com.arcao.geocaching.api.impl.live_geocaching_api.downloader.JsonDownloader;
 import com.arcao.geocaching.api.impl.live_geocaching_api.parser.JsonReader;
 import com.arcao.wmt.BuildConfig;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
+
+import java.io.Reader;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
 import timber.log.Timber;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-/**
- * Created by msloup on 24.4.2014.
- */
 public class OkHttpClientJsonDownloader implements JsonDownloader {
+	private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
 	protected OkHttpClient client;
-	protected GeocachingApiConfiguration configuration;
 
 	public OkHttpClientJsonDownloader(GeocachingApiConfiguration configuration, OkHttpClient client) {
-		this.configuration = configuration;
-		this.client = client;
+		this.client = client.clone();
+
+		this.client.setConnectTimeout(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
+		this.client.setReadTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS);
 	}
 
 	@Override
 	public JsonReader get(URL url) throws NetworkException, InvalidResponseException {
-		InputStream is;
-		InputStreamReader isr;
+		Reader reader;
 
 		try {
-			HttpURLConnection con = client.open(url);
+			Request request = new Request.Builder()
+							.url(url)
+							.addHeader("User-Agent", "Watch My Trackables " + BuildConfig.VERSION_NAME)
+							.addHeader("Accept", "application/json")
+							.build();
 
-			// important! sometimes GC API takes too long to return response
-			con.setConnectTimeout(configuration.getConnectTimeout());
-			con.setReadTimeout(configuration.getReadTimeout());
+			Response response = client.newCall(request).execute();
 
-			con.setRequestMethod("GET");
-			con.setRequestProperty("User-Agent", "Watch My Trackables " + BuildConfig.VERSION_NAME);
-			con.setRequestProperty("Accept", "application/json");
+			ResponseBody body =  response.body();
+			reader = body.charStream();
 
-			if (con.getResponseCode() >= 400) {
-				is = con.getErrorStream();
-			} else {
-				is = con.getInputStream();
-			}
-
-			if (con.getResponseCode() >= 400) {
-				isr = new InputStreamReader(is, "UTF-8");
-
+			if (!response.isSuccessful()) {
 				StringBuilder sb = new StringBuilder();
 				char buffer[] = new char[1024];
 
 				int len;
-				while ((len = isr.read(buffer)) != -1) {
+				while ((len = reader.read(buffer)) != -1) {
 					sb.append(buffer, 0, len);
 				}
 
-				isr.close();
+				reader.close();
 
 				// read error response
 				throw new InvalidResponseException(sb.toString());
 			}
 
-			isr = new InputStreamReader(is, "UTF-8");
-			return new JsonReader(isr);
+			return new JsonReader(reader);
 		} catch (InvalidResponseException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			Timber.e(e, e.getMessage());
 			throw new NetworkException("Error while downloading data (" + e.getClass().getSimpleName() + ")", e);
 		}
@@ -78,59 +73,41 @@ public class OkHttpClientJsonDownloader implements JsonDownloader {
 
 	@Override
 	public JsonReader post(URL url, byte[] postData) throws NetworkException, InvalidResponseException {
-		InputStream is;
-		InputStreamReader isr;
+		Reader reader;
 
 		try {
-			HttpURLConnection con = client.open(url);
+			Request request = new Request.Builder()
+							.url(url)
+							.method("POST", RequestBody.create(MEDIA_TYPE_JSON, postData))
+							.addHeader("User-Agent", "Watch My Trackables " + BuildConfig.VERSION_NAME)
+							.addHeader("Accept", "application/json")
+							.build();
 
-			con.setDoOutput(true);
 
-			// important! sometimes GC API takes too long to return response
-			con.setConnectTimeout(configuration.getConnectTimeout());
-			con.setReadTimeout(configuration.getReadTimeout());
+			Response response = client.newCall(request).execute();
 
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Content-Type", "application/json");
-			con.setRequestProperty("Content-Length", Integer.toString(postData.length));
-			con.setRequestProperty("User-Agent", "Watch My Trackables " + BuildConfig.VERSION_NAME);
-			con.setRequestProperty("Accept", "application/json");
+			ResponseBody body =  response.body();
+			reader = body.charStream();
 
-			OutputStream os = con.getOutputStream();
-
-			os.write(postData);
-			os.flush();
-			os.close();
-
-			if (con.getResponseCode() >= 400) {
-				is = con.getErrorStream();
-			} else {
-				is = con.getInputStream();
-			}
-
-			if (con.getResponseCode() >= 400) {
-				isr = new InputStreamReader(is, "UTF-8");
-
+			if (!response.isSuccessful()) {
 				StringBuilder sb = new StringBuilder();
 				char buffer[] = new char[1024];
 
 				int len;
-				while ((len = isr.read(buffer)) != -1) {
+				while ((len = reader.read(buffer)) != -1) {
 					sb.append(buffer, 0, len);
 				}
 
-				isr.close();
+				reader.close();
 
 				// read error response
 				throw new InvalidResponseException(sb.toString());
 			}
 
-			isr = new InputStreamReader(is, "UTF-8");
-
-			return new JsonReader(isr);
+			return new JsonReader(reader);
 		} catch (InvalidResponseException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			Timber.e(e, e.getMessage());
 			throw new NetworkException("Error while downloading data (" + e.getClass().getSimpleName() + "): " + e.getMessage(), e);
 		}

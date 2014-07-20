@@ -11,6 +11,8 @@ import com.arcao.geocaching.api.util.DeviceInfoFactory;
 import com.arcao.wmt.App;
 import com.arcao.wmt.constant.AppConstants;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.apache.http.impl.cookie.DateParseException;
 import org.apache.http.impl.cookie.DateUtils;
@@ -18,7 +20,6 @@ import org.apache.http.impl.cookie.DateUtils;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -142,13 +143,17 @@ public class OAuthLoginTask extends AsyncTask<String, Void, String[]> {
 	private Date getServerDate(String url) throws NetworkException {
 		try {
 			Timber.i("Getting server time from url: " + url);
-			HttpURLConnection c = okHttpClient.open(new URL(url));
-			c.setRequestMethod("HEAD");
-			c.setDoInput(false);
-			c.setDoOutput(false);
-			c.connect();
-			if (c.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				String date = c.getHeaderField("Date");
+
+			Request request = new Request.Builder()
+							.url(url)
+							.head()
+							.build();
+
+			Response response = okHttpClient.newCall(request).execute();
+			response = response.networkResponse();
+
+			if (response != null && response.code() == HttpURLConnection.HTTP_OK) {
+				String date = response.header("Date");
 				if (date != null) {
 					Timber.i("We got time: " + date);
 					return DateUtils.parseDate(date);
