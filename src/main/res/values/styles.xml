@@ -45,5 +45,19 @@
     <style name="card.content_outer_layout.trackable">
         <item name="android:minHeight">@dimen/card_thumbnail_width</item>
     </style>
+
+    <style name="AppTheme.Widget.Button.Geocaching" parent="android:Widget.Holo.Light.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">14dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@drawable/btn_green_holo_light</item>
+        <item name="android:drawableLeft">@drawable/ic_logo_geocaching_white</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
 

@@ -28,18 +28,9 @@
         android:gravity="center">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="Sign in with Geocaching"
             android:id="@+id/buttonSign"
-            android:layout_margin="16dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:background="@drawable/btn_green_holo_light"
-            android:drawableLeft="@drawable/ic_logo_geocaching_white"
-            android:drawablePadding="4dp"
-            android:textColor="@android:color/white"
-            />
+            style="@style/AppTheme.Widget.Button.Geocaching"/>
     </LinearLayout>
 
 </LinearLayout>
