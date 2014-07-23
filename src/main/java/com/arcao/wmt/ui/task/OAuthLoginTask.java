@@ -147,6 +147,7 @@ public class OAuthLoginTask extends AsyncTask<String, Void, String[]> {
 			Request request = new Request.Builder()
 							.url(url)
 							.head()
+							.addHeader("Cache-Control", "no-cache")
 							.build();
 
 			Response response = okHttpClient.newCall(request).execute();
