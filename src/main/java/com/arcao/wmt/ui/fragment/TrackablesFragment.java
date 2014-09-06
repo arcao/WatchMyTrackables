@@ -8,9 +8,13 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.*;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.activeandroid.content.ContentProvider;
 import com.arcao.wmt.R;
 import com.arcao.wmt.data.database.model.AbstractTrackableModel;
@@ -21,13 +25,18 @@ import com.arcao.wmt.ui.fragment.dialog.AddFavoritedTrackableDialogFragment;
 import com.arcao.wmt.ui.task.UpdateFavoritedTrackablesTask;
 import com.arcao.wmt.ui.task.UpdateMyTrackablesTask;
 import com.arcao.wmt.ui.task.iface.FinishableTask;
-import it.gmariotti.cardslib.library.internal.CardGridCursorAdapter;
-import it.gmariotti.cardslib.library.view.CardGridView;
-import timber.log.Timber;
+import com.nhaarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
+
+import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.lang.ref.WeakReference;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import it.gmariotti.cardslib.library.internal.CardGridCursorAdapter;
+import it.gmariotti.cardslib.library.view.CardGridView;
+import timber.log.Timber;
 
 /**
  * Created by msloup on 11.5.2014.
@@ -52,6 +61,7 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 	SwipeRefreshLayout swipeLayout;
 
 	private CardGridCursorAdapter mAdapter;
+	private AlphaInAnimationAdapter mAnimationAdapter;
 	private Class<M> modelClass;
 	private WeakReference<TrackablesListener> trackablesListenerReference;
 	private FinishableTask updateTask;
@@ -95,7 +105,11 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 
 		mAdapter = new TrackableCardCursorAdapter<>(getActivity(), modelClass, this);
 
-		grid.setAdapter(mAdapter);
+		mAnimationAdapter = new AlphaInAnimationAdapter(mAdapter);
+		mAnimationAdapter.setAbsListView(grid);
+
+		grid.setExternalAdapter(mAnimationAdapter, mAdapter);
+
 		getActivity().getLoaderManager().initLoader(TRACKABLE_LOADER, null, this);
 
 		swipeLayout.setOnRefreshListener(this);
@@ -111,6 +125,7 @@ public class TrackablesFragment<M extends AbstractTrackableModel> extends Abstra
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_trackables, container, false);
 		ButterKnife.inject(this, view);
+
 		return view;
 	}
 
